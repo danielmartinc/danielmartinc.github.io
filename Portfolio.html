@@ -366,22 +366,27 @@
             pointer-events: none;
         }
 
-        /* Mobile: show slideshow and make touch-friendly */
+        /* Mobile / Responsive */
         @media (max-width: 900px) {
             #contact .contact-grid { flex-direction: column; }
-            #contact .contact-media { display: block; width: 100%; order: -1; height: 220px; border-radius: 12px; margin-bottom: 1rem; }
+            #contact .contact-media { display: block !important; width: 100%; order: -1; height: 220px; border-radius: 12px; margin-bottom: 1rem; touch-action: pan-y; user-select: none; -webkit-user-drag: none; }
+            #contact .contact-media .slideshow { position: relative; height:100%; overflow:hidden; touch-action: pan-y; }
             #contact .contact-media .slideshow img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
             /* Make footer non-fixed on small screens and remain hidden until contact is visible */
             .site-footer { position: static; transform: none; opacity: 0; pointer-events: none; box-shadow: none; padding: 1rem 0; }
             .site-footer.visible { opacity: 1; pointer-events: auto; }
 
-        /* Responsive */
-        @media (max-width: 900px) {
             header { padding: 1rem; }
             #about { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
             .sidebar { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; padding-bottom: 2rem; }
             .avatar { margin: 0 auto 1.5rem; }
             .item h3 { font-size: 1.2rem; }
+
+            /* Mobile slideshow nav buttons */
+            .slideshow-btn { display: none; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; padding: 0.45rem 0.7rem; border-radius: 6px; font-size: 1.25rem; z-index: 5; }
+            .slideshow-btn.prev { left: 8px; }
+            .slideshow-btn.next { right: 8px; }
+            .slideshow-btn { display: flex; align-items: center; justify-content: center; }
         }
     </style>
 </head>
@@ -516,11 +521,15 @@
             </div>
 
             <!-- Right-side slideshow panel (3 images, 15s each) -->
-            <aside class="contact-media" aria-hidden="true">
+            <aside class="contact-media" aria-hidden="false">
                 <div class="slideshow" id="contactSlideshow" aria-hidden="false">
                     <img src="images/Contact-me.jpeg" alt="Contact image 1" class="active">
                     <img src="images/china-gt3-porsche.jpeg" alt="Contact image 2">
                     <img src="images/data-porsche-gt3.jpeg" alt="Contact image 3">
+
+                    <!-- navigation buttons for mobile -->
+                    <button class="slideshow-btn prev" aria-label="Previous image">‹</button>
+                    <button class="slideshow-btn next" aria-label="Next image">›</button>
                 </div>
             </aside>
         </div>
@@ -546,14 +555,17 @@
             const contact = document.getElementById('contact');
             if (!footer || !contact) return;
 
+            const contactMedia = document.querySelector('.contact-media');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         footer.classList.add('visible');
                         footer.setAttribute('aria-hidden', 'false');
+                        if (contactMedia) contactMedia.removeAttribute('aria-hidden');
                     } else {
                         footer.classList.remove('visible');
                         footer.setAttribute('aria-hidden', 'true');
+                        if (contactMedia) contactMedia.setAttribute('aria-hidden', 'true');
                     }
                 });
             }, { threshold: 0.3 });
@@ -634,6 +646,12 @@
                 if (timer) { clearInterval(timer); timer = null; }
                 else { timer = setInterval(next, duration); }
             });
+
+            // Mobile nav buttons
+            const prevBtn = slideshow.querySelector('.slideshow-btn.prev');
+            const nextBtn = slideshow.querySelector('.slideshow-btn.next');
+            if (prevBtn) prevBtn.addEventListener('click', (e) => { e.preventDefault(); prev(); clearInterval(timer); timer = setInterval(next, duration); });
+            if (nextBtn) nextBtn.addEventListener('click', (e) => { e.preventDefault(); next(); clearInterval(timer); timer = setInterval(next, duration); });
         })();
     </script>
 </body>
