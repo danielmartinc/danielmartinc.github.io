@@ -382,11 +382,10 @@
             .avatar { margin: 0 auto 1.5rem; }
             .item h3 { font-size: 1.2rem; }
 
-            /* Mobile slideshow nav buttons */
-            .slideshow-btn { display: none; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; padding: 0.45rem 0.7rem; border-radius: 6px; font-size: 1.25rem; z-index: 5; }
+            /* Mobile slideshow nav buttons (always visible on small screens) */
+            .slideshow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.55); color: #fff; border: none; padding: 0.6rem 0.8rem; min-width: 44px; min-height: 44px; border-radius: 8px; font-size: 1.25rem; z-index: 10; display: flex !important; align-items: center; justify-content: center; }
             .slideshow-btn.prev { left: 8px; }
             .slideshow-btn.next { right: 8px; }
-            .slideshow-btn { display: flex; align-items: center; justify-content: center; }
         }
     </style>
 </head>
@@ -622,36 +621,110 @@
             slideshow.addEventListener('mouseenter', () => clearInterval(timer));
             slideshow.addEventListener('mouseleave', () => { clearInterval(timer); timer = setInterval(next, duration); });
 
-            // Touch support: pause while touching and allow swipe left/right
-            let startX = null;
-            slideshow.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                clearInterval(timer);
-            }, { passive: true });
+            // Pointer support: pause while touching and allow swipe left/right (pointer events)
+            let startX = null, startY = null, isPointerDown = false;
+            // For small screens ensure slideshow is visible
+            const contactMediaEl = document.querySelector('.contact-media');
+            if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
+                if (contactMediaEl) contactMediaEl.removeAttribute('aria-hidden');
+            }
 
-            slideshow.addEventListener('touchend', (e) => {
-                if (startX === null) return;
-                const dx = e.changedTouches[0].clientX - startX;
-                const threshold = 30; // px needed for swipe
+            // Pointer handlers (covers many devices)
+            slideshow.addEventListener('pointerdown', (e) => {
+                if (e.pointerType === 'mouse' && e.button !== 0) return; // only left click
+                startX = e.clientX;
+                startY = e.clientY;
+                isPointerDown = true;
+                try { slideshow.setPointerCapture(e.pointerId); } catch (err) {}
+                clearInterval(timer);
+            });
+
+            slideshow.addEventListener('pointermove', (e) => {
+                if (!isPointerDown) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                // if user is doing vertical scroll more than horizontal, cancel swipe
+                if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) {
+                    isPointerDown = false;
+                    try { slideshow.releasePointerCapture(e.pointerId); } catch (err) {}
+                }
+            });
+
+            slideshow.addEventListener('pointerup', (e) => {
+                if (!isPointerDown) return;
+                const dx = e.clientX - startX;
+                const threshold = 30; // increased px needed for swipe to avoid accidental triggers
                 if (Math.abs(dx) > threshold) {
                     if (dx < 0) next(); else prev();
                 }
-                startX = null;
+                isPointerDown = false;
+                try { slideshow.releasePointerCapture(e.pointerId); } catch (err) {}
                 clearInterval(timer);
                 timer = setInterval(next, duration);
             });
 
-            // Allow tap to toggle pause/play on small screens
-            slideshow.addEventListener('click', () => {
+            slideshow.addEventListener('pointercancel', (e) => {
+                isPointerDown = false;
+                try { slideshow.releasePointerCapture(e.pointerId); } catch (err) {}
+                clearInterval(timer);
+                timer = setInterval(next, duration);
+            });
+
+            // Touch fallback for devices without pointer events
+            let touchStartX = null, touchStartY = null, touchMoving = false;
+            slideshow.addEventListener('touchstart', (e) => {
+                const t = e.touches[0];
+                touchStartX = t.clientX;
+                touchStartY = t.clientY;
+                touchMoving = true;
+                clearInterval(timer);
+            }, { passive: true });
+
+            slideshow.addEventListener('touchmove', (e) => {
+                if (!touchMoving) return;
+                const t = e.touches[0];
+                const dx = t.clientX - touchStartX;
+                const dy = t.clientY - touchStartY;
+                // if mostly vertical scrolling, cancel
+                if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) {
+                    touchMoving = false;
+                }
+            }, { passive: true });
+
+            slideshow.addEventListener('touchend', (e) => {
+                if (!touchMoving) return;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - touchStartX;
+                const threshold = 30;
+                if (Math.abs(dx) > threshold) {
+                    if (dx < 0) next(); else prev();
+                }
+                touchMoving = false;
+                clearInterval(timer);
+                timer = setInterval(next, duration);
+            });
+
+            // Allow tap to toggle pause/play on small screens (only if no swipe detected)
+            let lastTap = 0;
+            slideshow.addEventListener('click', (e) => {
+                const now = Date.now();
+                if (now - lastTap < 350) return; // prevent double triggers when swipe ends
+                lastTap = now;
                 if (timer) { clearInterval(timer); timer = null; }
                 else { timer = setInterval(next, duration); }
             });
 
-            // Mobile nav buttons
+            // Mobile nav buttons (ensure touchstart also works)
             const prevBtn = slideshow.querySelector('.slideshow-btn.prev');
             const nextBtn = slideshow.querySelector('.slideshow-btn.next');
-            if (prevBtn) prevBtn.addEventListener('click', (e) => { e.preventDefault(); prev(); clearInterval(timer); timer = setInterval(next, duration); });
-            if (nextBtn) nextBtn.addEventListener('click', (e) => { e.preventDefault(); next(); clearInterval(timer); timer = setInterval(next, duration); });
+            if (prevBtn) {
+                prevBtn.addEventListener('click', (e) => { e.preventDefault(); prev(); clearInterval(timer); timer = setInterval(next, duration); });
+                prevBtn.addEventListener('touchstart', (e) => { e.preventDefault(); prev(); clearInterval(timer); timer = setInterval(next, duration); }, { passive: true });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => { e.preventDefault(); next(); clearInterval(timer); timer = setInterval(next, duration); });
+                nextBtn.addEventListener('touchstart', (e) => { e.preventDefault(); next(); clearInterval(timer); timer = setInterval(next, duration); }, { passive: true });
+            }
         })();
     </script>
 </body>
