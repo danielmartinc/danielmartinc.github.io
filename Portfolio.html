@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Daniel Martin | Motorsport Engineer</title>
     <link rel="stylesheet" href="static/css/styles.css">
     <style>
@@ -11,6 +11,8 @@
         html {
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
+            /* prevent anchor targets from being hidden under the fixed header on phones */
+            scroll-padding-top: 76px;
         }
 
         body {
@@ -368,10 +370,17 @@
 
         /* Mobile / Responsive */
         @media (max-width: 900px) {
+            /* Prefer normal scrolling on phones and ensure anchored sections aren't hidden */
+            html { scroll-snap-type: none; scroll-padding-top: 64px; }
+
             #contact .contact-grid { flex-direction: column; }
             #contact .contact-media { display: block !important; width: 100%; order: -1; height: 220px; border-radius: 12px; margin-bottom: 1rem; touch-action: pan-y; user-select: none; -webkit-user-drag: none; }
             #contact .contact-media .slideshow { position: relative; height:100%; overflow:hidden; touch-action: pan-y; }
             #contact .contact-media .slideshow img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+            /* Avoid double-scrolling inside sections on phones */
+            .content-wrap { max-height: none; overflow: visible; padding-right: 0; }
+
             /* Make footer non-fixed on small screens and remain hidden until contact is visible */
             .site-footer { position: static; transform: none; opacity: 0; pointer-events: none; box-shadow: none; padding: 1rem 0; }
             .site-footer.visible { opacity: 1; pointer-events: auto; }
