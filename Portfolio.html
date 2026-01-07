@@ -736,5 +736,64 @@
             }
         })();
     </script>
+
+    <script>
+    // Mobile-only MENU overlay (injects on small screens, leaves desktop untouched)
+    (function(){
+        const mq = window.matchMedia('(max-width: 900px)');
+        function setupMenu(){
+            if (!mq.matches) return;
+            if (document.querySelector('.mobile-menu-btn')) return; // already set
+            const header = document.querySelector('header');
+            if (!header) return;
+
+            // Create MENU button
+            const btn = document.createElement('button');
+            btn.className = 'mobile-menu-btn';
+            btn.type = 'button';
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-controls', 'mobileNavOverlay');
+            btn.textContent = 'MENU';
+
+            // Create overlay nav
+            const overlay = document.createElement('nav');
+            overlay.id = 'mobileNavOverlay';
+            overlay.className = 'nav-overlay';
+            overlay.setAttribute('aria-hidden', 'true');
+
+            const origNav = document.querySelector('nav ul');
+            if (origNav) {
+                const clone = origNav.cloneNode(true);
+                clone.removeAttribute('style');
+                clone.querySelectorAll('li').forEach(li => li.style.listStyle = 'none');
+                overlay.appendChild(clone);
+                // Close overlay when link clicked
+                overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { overlay.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }));
+            }
+
+            btn.addEventListener('click', () => {
+                const open = overlay.classList.toggle('open');
+                btn.setAttribute('aria-expanded', String(open));
+                overlay.setAttribute('aria-hidden', String(!open));
+            });
+
+            header.appendChild(btn);
+            document.body.appendChild(overlay);
+
+            // Close on escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { overlay.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); overlay.setAttribute('aria-hidden', 'true'); }
+            });
+
+            // Ensure overlay is removed on resize to desktop width
+            mq.addEventListener('change', (ev) => { if (!ev.matches) { overlay.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); overlay.setAttribute('aria-hidden', 'true'); } });
+        }
+
+        // Initialize if needed
+        setupMenu();
+        // Also run on orientation change (some mobiles toggle width)
+        window.addEventListener('orientationchange', () => { setupMenu(); });
+    })();
+    </script>
 </body>
 </html>
