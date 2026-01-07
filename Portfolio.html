@@ -119,7 +119,8 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            z-index: 999;
+            /* Ensure overlay sits above header and hamburger */
+            z-index: 2000;
         }
 
         .nav-overlay.active {
@@ -486,8 +487,8 @@
 
             .avatar {
                 margin: 0 auto 1.5rem;
-                width: 90px;
-                height: 90px;
+                width: 120px;
+                height: 120px;
             }
 
             .avatar::before {
