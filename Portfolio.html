@@ -3,568 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Daniel Martin | Motorsport Engineer</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 80px;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #1a1a1a;
-            background-color: #fff;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        /* Fixed Navigation */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 1001;
-        }
-
-        .header-logo {
-            height: 40px;
-            width: auto;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .header-logo:hover {
-            transform: scale(1.05);
-        }
-
-        /* Desktop Navigation */
-        nav ul {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #888;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: color 0.3s;
-        }
-
-        nav a:hover { color: #000; }
-
-        /* Hamburger Menu (hidden on desktop) */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            z-index: 1001;
-            background: none;
-            border: none;
-            padding: 0.5rem;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 2px;
-            background: #000;
-            margin: 4px 0;
-            transition: all 0.3s ease;
-            display: block;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
-        }
-
-        /* Mobile Menu Overlay */
-        .nav-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.98);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            /* Ensure overlay sits above header and hamburger */
-            z-index: 2000;
-        }
-
-        .nav-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .nav-overlay ul {
-            list-style: none;
-            text-align: center;
-        }
-
-        .nav-overlay li {
-            margin: 2rem 0;
-        }
-
-        .nav-overlay a {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #000;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-overlay a:hover {
-            color: #666;
-        }
-
-        /* Sections */
-        section {
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6rem 10% 4rem;
-            position: relative;
-        }
-
-        /* About Section */
-        #about {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 4rem;
-        }
-
-        .sidebar {
-            text-align: left;
-            border-right: 1px solid #eee;
-            padding-right: 3rem;
-        }
-
-        .avatar {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            overflow: visible;
-            margin-bottom: 1.5rem;
-            position: relative;
-            background: transparent;
-            display: inline-block;
-        }
-
-        .avatar::before {
-            content: "";
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6dc8f3 0%, #7b61ff 100%);
-            filter: blur(8px);
-            opacity: 0.9;
-            z-index: 0;
-        }
-
-        .avatar::after {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.06), rgba(0,0,0,0.04));
-            z-index: 1;
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 50%;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 10px 24px rgba(12,12,12,0.14);
-            transition: transform 220ms ease, box-shadow 220ms ease;
-        }
-
-        .avatar:hover img {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 18px 40px rgba(12,12,12,0.18);
-        }
-
-        .sidebar h1 { font-size: 2.2rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
-        .sidebar p { color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        .bio p {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-
-        .bio .intro {
-            font-size: 2rem;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.5px;
-            color: #111;
-        }
-
-        .social-links {
-            margin-top: 1rem;
-            display: flex;
-            gap: 0.6rem;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.45rem 0.7rem;
-            background: #f3f3f3;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #111;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
-
-        .social-links a svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .social-links a.linkedin:hover {
-            background: #0a66c2;
-            color: #fff;
-        }
-
-        .social-links a.github:hover {
-            background: #111;
-            color: #fff;
-        }
-
-        .content-wrap {
-            max-width: 900px;
-            width: 100%;
-        }
-
-        h2 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #aaa;
-            margin-bottom: 2rem;
-        }
-
-        .item { margin-bottom: 2.5rem; }
-        .item h3 { font-size: 1.5rem; margin-bottom: 0.3rem; letter-spacing: -0.5px; }
-        .company { font-weight: 700; color: #000; font-size: 1rem; }
-        .date { color: #888; font-size: 0.85rem; margin-bottom: 0.8rem; display: block; }
-
-        .item ul {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-
-        .item ul li {
-            font-size: 0.95rem;
-            color: #444;
-            margin-bottom: 0.4rem;
-            padding-left: 1.2rem;
-            position: relative;
-        }
-
-        .item ul li::before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: #ccc;
-        }
-
-        /* Form */
-        form { display: grid; gap: 1rem; max-width: 500px; }
-
-        input, textarea {
-            padding: 1rem;
-            border: 1px solid #eee;
-            background: #f9f9f9;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 16px;
-        }
-
-        button {
-            padding: 1rem;
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            touch-action: manipulation;
-        }
-
-        .contact-btn {
-            display: inline-block;
-            padding: 0.7rem 1rem;
-            background: #000;
-            color: #fff;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            margin-top: 1rem;
-        }
-
-        /* Contact Section */
-        #contact .contact-grid {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start;
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        #contact .contact-grid .content-wrap {
-            flex: 1;
-            max-width: 62%;
-        }
-
-        #contact .contact-media {
-            flex: 0 0 380px;
-            border-radius: 14px;
-            overflow: hidden;
-            position: relative;
-            height: 360px;
-            box-shadow: 0 18px 40px rgba(12,12,12,0.12);
-            background: #000;
-        }
-
-        #contact .contact-media .slideshow img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 900ms ease;
-        }
-
-        #contact .contact-media .slideshow img.active {
-            opacity: 1;
-        }
-
-        #contact .contact-media .slideshow::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.18) 100%);
-            pointer-events: none;
-        }
-
-        .slideshow-btn {
-            display: none;
-        }
-
-        /* Footer */
-        .site-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.95);
-            color: #fff;
-            font-size: 0.9rem;
-            padding: 0.55rem 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1200;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.12);
-            transform: translateY(110%);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 250ms ease, opacity 250ms ease;
-        }
-
-        .site-footer.visible {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .site-footer .inner {
-            max-width: 1200px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .site-footer a {
-            color: #fff;
-            text-decoration: none;
-            opacity: 0.9;
-            margin-left: 0.8rem;
-            font-weight: 600;
-        }
-
-        .site-footer a:hover {
-            text-decoration: underline;
-            opacity: 1;
-        }
-
-        /* Mobile Styles */
-        @media (max-width: 900px) {
-            header {
-                padding: 1rem 1.5rem;
-            }
-
-            /* Hide desktop nav, show hamburger */
-            nav ul {
-                display: none;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            html {
-                scroll-padding-top: 70px;
-            }
-
-            section {
-                padding: 5rem 5% 3rem;
-                min-height: auto;
-            }
-
-            #about {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 2rem;
-            }
-
-            .sidebar {
-                border-right: none;
-                padding-right: 0;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 2rem;
-            }
-
-            .avatar {
-                margin: 0 auto 1.5rem;
-                width: 120px;
-                height: 120px;
-            }
-
-            .avatar::before {
-                inset: -6px;
-                filter: blur(6px);
-            }
-
-            .bio .intro {
-                font-size: 1.8rem;
-            }
-
-            .bio p {
-                font-size: 1rem;
-            }
-
-            .item h3 {
-                font-size: 1.2rem;
-            }
-
-            #contact .contact-grid {
-                flex-direction: column;
-            }
-
-            #contact .contact-grid .content-wrap {
-                max-width: 100%;
-            }
-
-            #contact .contact-media {
-                width: 100%;
-                order: -1;
-                height: 220px;
-                border-radius: 12px;
-                margin-bottom: 1rem;
-            }
-
-            .slideshow-btn {
-                display: flex !important;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                background: rgba(0,0,0,0.55);
-                color: #fff;
-                border: none;
-                padding: 0.6rem 0.8rem;
-                min-width: 44px;
-                min-height: 44px;
-                border-radius: 8px;
-                font-size: 1.25rem;
-                z-index: 10;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-            }
-
-            .slideshow-btn.prev { left: 8px; }
-            .slideshow-btn.next { right: 8px; }
-
-            .site-footer {
-                position: static;
-                transform: none;
-                opacity: 1;
-                pointer-events: auto;
-                box-shadow: none;
-                padding: 1rem 0;
-                background: transparent;
-                color: #111;
-            }
-
-            .site-footer .inner {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+    <meta name="description" content="Daniel Martin - Data Engineer specializing in motorsport racing, GT3 and LMGT3 programs. Expert in data analysis, vehicle systems, and performance optimization.">
+    <meta name="keywords" content="Data Engineer, Motorsport, GT3, LMGT3, Cosworth, MoTeC, Racing Engineer">
+    <meta name="author" content="Daniel Martin">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Daniel Martin | Data Engineer - Motorsport">
+    <meta property="og:description" content="Data Engineer specializing in motorsport racing, GT3 and LMGT3 programs.">
+    <meta property="og:image" content="images/My%20project-1.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <title>Daniel Martin | Data Engineer - Motorsport</title>
 </head>
 <body>
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress"></div>
 
     <header>
         <a href="#about" class="logo-container">
@@ -575,6 +34,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#education">Education</a></li>
+                <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -586,17 +46,18 @@
     </header>
 
     <!-- Mobile Navigation Overlay -->
-    <div class="nav-overlay">
+    <div class="nav-overlay" role="navigation" aria-label="Mobile navigation">
         <ul>
             <li><a href="#about">About</a></li>
             <li><a href="#experience">Experience</a></li>
             <li><a href="#education">Education</a></li>
+            <li><a href="#skills">Skills</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </div>
 
     <section id="about">
-        <div class="sidebar">
+        <div class="sidebar animate-on-scroll">
             <div class="avatar">
                 <img src="images/My%20project-1.png" alt="Daniel Martin" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Crect fill=%22%23ddd%22 width=%22110%22 height=%22110%22/%3E%3C/svg%3E'">
             </div>
@@ -619,16 +80,16 @@
                 </a>
             </div>
         </div>
-        <div class="bio">
-            <h1 class="intro">Hi! I'm Daniel Martin</h1>
+        <div class="bio animate-on-scroll" style="transition-delay: 200ms;">
+            <h1 class="intro">Hi! I am Daniel Martin</h1>
             <p>
-                I am a motorsport engineer with experience as a Data Engineer and Systems Engineer in top-level endurance racing, focusing on GT3 and LMGT3 programs with the Ford Mustang and Porsche platforms.
+                I am a motorsport engineer with a broad background in Data and Systems Engineering within top-level endurance racing. My recent work focuses on GT3 programs, including the Ford Mustang (WEC) and Porsche 911 GT3 R (ELMS & MLMC).
             </p>
             <p>
-                I specialize in data analysis, vehicle systems, and performance optimization. I have hands-on experience in designing and integrating data acquisition systems (Cosworth, MoTeC, RaceCon) to deliver robust solutions under pressure.
+                I specialize in data analysis, vehicle systems, and performance optimization. My hands-on experience with data acquisition systems (Cosworth, MoTeC, RaceCon) enables me to solve complex, large-scale engineering problems and apply systems-level solutions directly to vehicle performance on track.
             </p>
             <p>
-                I am known for a practical, solution-driven mindset and the ability to perform under pressure in demanding race environments. I continuously develop my technical skills to deliver robust and effective systems that contribute directly to on-track performance.
+                My diverse background across different sectors helps me having a whole sight at the track, allowing me to solve complex, in a demanding environment, high-level engineering challenges. I am continuously developing my technical skills to deliver effective solutions that contribute directly to on-track performance.  
             </p>
             <a href="#contact" class="contact-btn">Contact Me</a>
         </div>
@@ -636,24 +97,24 @@
 
     <section id="experience">
         <div class="content-wrap">
-            <h2>Professional Experience</h2>
+            <h2 class="animate-on-scroll">Professional Experience</h2>
             
             <div class="item">
                 <span class="company">Proton Competition</span>
                 <h3>Data Engineer</h3>
-                <span class="date">01/2025 – Current | WEC, ELMS, ALMS</span>
+                <span class="date">01/2025 - Current | WEC, ELMS, ALMS</span>
                 <ul>
                     <li>Data Engineer for Porsche LMGT3 R and Ford Mustang LMGT3.</li>
                     <li>Managing IT structure and technical requirements for WEC/ELMS organizations.</li>
                     <li>Configuring Cosworth, MoTeC i2 Pro, and RaceCon systems.</li>
-                    <li>Operating HH Timing & HH Data Management for race strategy.</li>
+                    <li>Operating HH Timing and HH Data Management for race strategy.</li>
                 </ul>
             </div>
 
             <div class="item">
                 <span class="company">High Class Racing</span>
-                <h3>Systems & Data Engineer</h3>
-                <span class="date">03/2024 – 12/2024 | Barcelona, Spain</span>
+                <h3>Systems and Data Engineer</h3>
+                <span class="date">03/2024 - 12/2024 | Barcelona, Spain</span>
                 <ul>
                     <li>Performance optimization for Porsche GT3 R in MLMC.</li>
                     <li>Diagnosis and system checks via Cosworth Toolset and Pi Toolbox.</li>
@@ -664,7 +125,7 @@
             <div class="item">
                 <span class="company">ENEL S.L.</span>
                 <h3>Energy Engineer</h3>
-                <span class="date">05/2022 – 01/2024 | Sevilla, Spain</span>
+                <span class="date">05/2022 - 01/2024 | Sevilla, Spain</span>
                 <ul>
                     <li>Automation of supply studies using VBA, SQL, and Python.</li>
                     <li>Mapping database extractions and managing project workflows via Jira and GitHub.</li>
@@ -675,7 +136,7 @@
 
     <section id="education">
         <div class="content-wrap">
-            <h2>Education</h2>
+            <h2 class="animate-on-scroll">Education</h2>
             
             <div class="item">
                 <h3>MSc in Motorsport Racing</h3>
@@ -686,20 +147,77 @@
             <div class="item">
                 <h3>Bachelors in Materials Engineer</h3>
                 <span class="company">University of Seville</span>
-                <span class="date">2018 – 2022 | Sevilla, Spain</span>
+                <span class="date">2018 - 2022 | Sevilla, Spain</span>
             </div>
 
             <div class="item">
                 <h3>Master in Productivity and Personal Development</h3>
-                <span class="company">University Camilo José Cela</span>
-                <span class="date">2022 – 2023 | Madrid, Spain</span>
+                <span class="company">University Camilo Jose Cela</span>
+                <span class="date">2022 - 2023 | Madrid, Spain</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="section-header animate-on-scroll">
+            <h2>Technical Skills</h2>
+            <p>Specialized tools and technologies I use to deliver high-performance solutions in motorsport engineering</p>
+        </div>
+        
+        <div class="skills-grid">
+            <div class="skill-category">
+                <div class="icon"></div>
+                <h4>Data and Analytics</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">PowerBI</span>
+                    <span class="skill-tag">Microsoft 365</span>
+                    <span class="skill-tag">Matlab</span>
+                    <span class="skill-tag">Data Cleaning (ETL)</span>
+                    <span class="skill-tag">Statistical analysis</span>
+                    <span class="skill-tag">Data Acquisition</span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <div class="icon"></div>
+                <h4>Programming</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">VBA (.Net)</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">JavaScript</span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <div class="icon"></div>
+                <h4>Motorsport Systems</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Cosworth Systems</span>
+                    <span class="skill-tag">Porsche Tools</span>
+                    <span class="skill-tag">Motec Systems</span>
+                    <span class="skill-tag">Bosch Systems</span>
+                    <span class="skill-tag">HH Timming & Data Management</span>
+                    <span class="skill-tag">VBOX Systems </span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <div class="icon"></div>
+                <h4>Tools and Workflow</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">GitHub</span>
+                    <span class="skill-tag">Jira</span>
+                    <span class="skill-tag">IT Infrastructure</span>
+                    <span class="skill-tag">Project Management</span>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="contact">
         <div class="contact-grid">
-            <div class="content-wrap">
+            <div class="content-wrap animate-on-scroll">
                 <h2>Get In Touch</h2>
                 <form action="https://formspree.io/f/xnjnevlr" method="POST">
                     <input type="text" name="name" placeholder="Name" required>
@@ -709,14 +227,14 @@
                 </form>
             </div>
 
-            <aside class="contact-media">
+            <aside class="contact-media scale-on-scroll">
                 <div class="slideshow" id="contactSlideshow">
                     <img src="images/Contact-me.jpeg" alt="Contact image 1" class="active" onerror="this.style.display='none'">
                     <img src="images/china-gt3-porsche.jpeg" alt="Contact image 2" onerror="this.style.display='none'">
                     <img src="images/data-porsche-gt3.jpeg" alt="Contact image 3" onerror="this.style.display='none'">
 
-                    <button class="slideshow-btn prev" aria-label="Previous image">‹</button>
-                    <button class="slideshow-btn next" aria-label="Next image">›</button>
+                    <button class="slideshow-btn prev" aria-label="Previous image"></button>
+                    <button class="slideshow-btn next" aria-label="Next image"></button>
                 </div>
             </aside>
         </div>
@@ -724,7 +242,7 @@
 
     <footer class="site-footer" role="contentinfo">
         <div class="inner">
-            <small>© <span id="currentYear"></span> Daniel Martin. All rights reserved.</small>
+            <small> <span id="currentYear"></span> Daniel Martin. All rights reserved.</small>
             <nav class="footer-links" aria-label="Footer links">
                 <a href="#privacy">Privacy</a>
                 <a href="#terms">Terms</a>
@@ -732,124 +250,7 @@
         </div>
     </footer>
 
-    <script>
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        // Hamburger menu toggle
-        const hamburger = document.querySelector('.hamburger');
-        const navOverlay = document.querySelector('.nav-overlay');
-        const navLinks = document.querySelectorAll('.nav-overlay a');
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navOverlay.classList.toggle('active');
-            document.body.style.overflow = navOverlay.classList.contains('active') ? 'hidden' : '';
-        });
-
-        // Close menu when clicking a link
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
-
-        // Close menu on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && navOverlay.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                navOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-
-        // Footer visibility
-        const footer = document.querySelector('.site-footer');
-        const contact = document.getElementById('contact');
-        
-        if (footer && contact) {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        footer.classList.add('visible');
-                    } else {
-                        footer.classList.remove('visible');
-                    }
-                });
-            }, { threshold: 0.3 });
-
-            observer.observe(contact);
-        }
-
-        // Slideshow
-        const slideshow = document.getElementById('contactSlideshow');
-        if (slideshow) {
-            const imgs = Array.from(slideshow.querySelectorAll('img'));
-            let idx = 0;
-            const duration = 8000;
-
-            function next() {
-                imgs[idx].classList.remove('active');
-                idx = (idx + 1) % imgs.length;
-                imgs[idx].classList.add('active');
-            }
-
-            function prev() {
-                imgs[idx].classList.remove('active');
-                idx = (idx - 1 + imgs.length) % imgs.length;
-                imgs[idx].classList.add('active');
-            }
-
-            let timer = setInterval(next, duration);
-
-            slideshow.addEventListener('mouseenter', () => clearInterval(timer));
-            slideshow.addEventListener('mouseleave', () => { 
-                clearInterval(timer); 
-                timer = setInterval(next, duration); 
-            });
-
-            // Touch support
-            let startX = 0, moving = false;
-            
-            slideshow.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                moving = true;
-                clearInterval(timer);
-            }, { passive: true });
-
-            slideshow.addEventListener('touchend', (e) => {
-                if (!moving) return;
-                const dx = e.changedTouches[0].clientX - startX;
-                if (Math.abs(dx) > 50) {
-                    if (dx < 0) next(); else prev();
-                }
-                moving = false;
-                timer = setInterval(next, duration);
-            });
-
-            // Button controls
-            const prevBtn = slideshow.querySelector('.slideshow-btn.prev');
-            const nextBtn = slideshow.querySelector('.slideshow-btn.next');
-            
-            if (prevBtn) {
-                prevBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    prev();
-                    clearInterval(timer);
-                    timer = setInterval(next, duration);
-                });
-            }
-            
-            if (nextBtn) {
-                nextBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    next();
-                    clearInterval(timer);
-                    timer = setInterval(next, duration);
-                });
-            }
-        }
-    </script>
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
 </body>
 </html>
